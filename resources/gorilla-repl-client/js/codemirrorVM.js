@@ -32,7 +32,7 @@ var codemirrorVM = function (id, initialContents, contentType) {
 
     self.complete = function (completionFunc) {
         CodeMirror.showHint(self.codeMirror, completionFunc,
-            {async: true, completeSingle: false, alignWithWord: false});
+                            {async: true, completeSingle: false, alignWithWord: false});
     };
 
     self.reindent = function (completionFunc) {
@@ -99,26 +99,26 @@ ko.bindingHandlers.codemirror = {
         // First we need to define a CodeMirror command that does nothing
         // (according to the CodeMirror docs, one should be able set a key-binding as 'false' and have it do nothing
         // but I can't seem to get that to work.
-        CodeMirror.commands['doNothing'] = function () {};
+        // CodeMirror.commands['doNothing'] = function () {};
         // then patch the Mac default keymap to get rid of the emacsy binding, which interfere with our shortcuts
-        CodeMirror.keyMap['macDefault'].fallthrough = "basic";
+        // CodeMirror.keyMap['macDefault'].fallthrough = "basic";
         // and then create our custom map, which will fall through to the (patched) default. Shift+Enter and variants
         // are stopped from doing anything.
-        CodeMirror.keyMap["gorilla"] = {
-            'Shift-Enter': "doNothing",
-            'Shift-Ctrl-Enter': "doNothing",
-            'Shift-Alt-Enter': "doNothing",
-            'Shift-Tab': "doNothing",
-            fallthrough: "default"};
+        // CodeMirror.keyMap["gorilla"] = {
+        //     'Shift-Enter': "doNothing",
+        //     'Shift-Ctrl-Enter': "doNothing",
+        //     'Shift-Alt-Enter': "doNothing",
+        //     'Shift-Tab': "doNothing",
+        //     fallthrough: ["paredit_cm", "emacys", "basic"]};
         var cm = CodeMirror.fromTextArea(element,
-            {
-                lineNumbers: true,
-                matchBrackets: true,
-                autoCloseBrackets: '()[]{}""',
-                lineWrapping: true,
-                keyMap: 'gorilla',
-                mode: valueAccessor().contentType
-            });
+                                         {
+                                             lineNumbers: true,
+                                             matchBrackets: true,
+                                             autoCloseBrackets: '()[]{}""',
+                                             lineWrapping: true,
+                                             keyMap: 'paredit_cm',
+                                             mode: valueAccessor().contentType
+                                         });
         cm.on("keydown", function (editor, event) {
             // we stop() the cursor events, as we don't want them reaching the worksheet. We explicitly
             // generate events when the cursor should leave the segment.
@@ -130,7 +130,7 @@ ko.bindingHandlers.codemirror = {
                 // TODO: I'm not sure whether the completionActive state is part of the public API
                 if ((curs.line === 0) && !editor.state.completionActive)
                     valueAccessor().notifyMoveCursorBack();
-           //     event.preventDefault();
+                //     event.preventDefault();
             }
             // left
             if (event.keyCode === 37 && !event.shiftKey) {
@@ -138,7 +138,7 @@ ko.bindingHandlers.codemirror = {
                 curs = editor.getCursor();
                 // check for first line, start position
                 if (curs.line === 0 && curs.ch === 0) valueAccessor().notifyMoveCursorBack();
-            //    event.preventDefault();
+                //    event.preventDefault();
             }
             // down
             if (event.keyCode === 40 && !event.shiftKey) {
@@ -147,7 +147,7 @@ ko.bindingHandlers.codemirror = {
                 // check for last line
                 if ((curs.line === (editor.lineCount() - 1)) && !editor.state.completionActive)
                     valueAccessor().notifyMoveCursorForward();
-             //   event.preventDefault();
+                //   event.preventDefault();
             }
             // right
             if (event.keyCode === 39 && !event.shiftKey) {
@@ -158,7 +158,7 @@ ko.bindingHandlers.codemirror = {
                     if (curs.ch === editor.getLine(curs.line).length)
                         valueAccessor().notifyMoveCursorForward();
                 }
-            //    event.preventDefault();
+                //    event.preventDefault();
             }
             // delete on an empty editor
             if (event.keyCode === 8) {
